@@ -1,4 +1,4 @@
-from Token import Token, TokenType
+from Token import Token, TokenType, lookup_ident
 from typing import Any
 
 class Lexer:
@@ -23,10 +23,16 @@ class Lexer:
         self.read_position+=1
 
 
+    def __peek_char(self):
+        #peeks to the next char
+        if self.read_position >= len(self.source):
+            return None
+        return self.source[self.read_position]
+
 
     def __skip_whitespace(self):
         #skip ignored characters like new lines, spaces, tabs
-        while self.current_character in [' ','\t', '\n','r']:
+        while self.current_character in [' ','\t', '\n','\r']:
             if self.current_character =='\n':
                 self.line_number+=1
             self.__read_char()
@@ -42,6 +48,10 @@ class Lexer:
     def __is_digit(self, ch):
         #if our tokens were not inside (*^%+-) then this function check that if current character is an intiger or not
         return '0' <=ch and ch <='9'
+    
+
+    def __is_letter(self, ch: str) -> bool:
+        return 'a' <= ch and ch <='z' or 'A' <=ch and ch <='Z' or ch =='_'
 
 
 
@@ -68,6 +78,17 @@ class Lexer:
             return self.__new_token(TokenType.FLOAT, float(output))
 
 
+
+
+    def __read_identifier(self)->str:
+        position = self.position
+        while self.current_character is not None and (self.__is_letter(self.current_character)or self.current_character.isalnum()):
+            self.__read_char()
+
+        return self.source[position:self.position]
+
+
+
     def next_token(self):
         token=None
         self.__skip_whitespace()
@@ -80,7 +101,13 @@ class Lexer:
             case'+':
                 token=self.__new_token(TokenType.PLUS, self.current_character)
             case'-':
-                token=self.__new_token(TokenType.MINUS, self.current_character)
+                #Handle arrow for functions
+                if self.__peek_char()=='>':
+                    ch=self.current_character
+                    self.__read_char()
+                    tok = self.__new_token(TokenType.Arrow, ch + self.current_character)
+                else:
+                    token=self.__new_token(TokenType.MINUS, self.current_character)
             case'*':
                 token=self.__new_token(TokenType.ASTERISK, self.current_character)
             case'/':
@@ -88,16 +115,34 @@ class Lexer:
             case'^':
                 token=self.__new_token(TokenType.POW, self.current_character)
             case'%':
-                token=self.__new_token(TokenType.MODULUS, self.current_character)                
+                token=self.__new_token(TokenType.MODULUS, self.current_character)    
+            case '=':
+                if self.__peek_char() == '>':
+                    ch = self.current_character
+                    self.__read_char()
+                    token = self.__new_token(TokenType.ARROW, ch + self.current_character)
+                else:
+                    token = self.__new_token(TokenType.EQ, self.current_character)    
+            case ':':
+                token=self.__new_token(TokenType.COLON, self.current_character)       
             case'(':
                 token=self.__new_token(TokenType.LEFTPARENTHESES, self.current_character)
             case')':
                 token=self.__new_token(TokenType.RIGHTPARENTHESES, self.current_character)
+            case '{':
+                token=self.__new_token(TokenType.LBRACE, self.current_character)
+            case '}':
+                token=self.__new_token(TokenType.RBRACE, self.current_character)
             case';':
                 token=self.__new_token(TokenType.SEMICOLON, self.current_character)
             case None:
                 token=self.__new_token(TokenType.EOF, "")
             case _:
+                if self.__is_letter(self.current_character):
+                    literal:str = self.__read_identifier()
+                    tt: TokenType = lookup_ident(literal)
+                    token = self.__new_token(tokens=tt, literal=literal)
+                    return token
                 # Illegal token for unmatched characters
                 token = self.__new_token(TokenType.ILLEGAL, self.current_character)
         

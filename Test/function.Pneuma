@@ -1,0 +1,5 @@
+act main() => int{
+    mark x:int = 40;
+    x = x * 2;
+    return x;
+}

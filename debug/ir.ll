@@ -4,7 +4,12 @@ target datalayout = ""
 
 define i32 @"main"()
 {
-"(function_name)_entry":
-  %".2" = fmul float 0x40115c2900000000, 0x4014666660000000
-  ret i32 444
+main_entry:
+  %".2" = alloca i32
+  store i32 40, i32* %".2"
+  %".4" = load i32, i32* %".2"
+  %".5" = mul i32 %".4", 2
+  store i32 %".5", i32* %".2"
+  %".7" = load i32, i32* %".2"
+  ret i32 %".7"
 }

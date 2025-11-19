@@ -10,8 +10,10 @@ class TokenType(Enum):
     
 
     #Data Types
+    IDENT = "IDENT"
     INT = "INT"
     FLOAT = "FLOAT"
+    
 
 
     #Arithmatic Symbols
@@ -23,10 +25,27 @@ class TokenType(Enum):
     MODULUS = "MODULUS"
 
 
+    #Assignment Symbols
+    EQ = "EQ"
+
+
     #Symbols
+    COLON = "COLON"
     SEMICOLON = "SEMICOLON"
     LEFTPARENTHESES = "LEFTPARENTHESES"
     RIGHTPARENTHESES="RIGHTPARENTHESES"
+    ARROW = "ARROW"
+    LBRACE = "LBRACE"
+    RBRACE = "RBRACE"
+
+
+    #Syntax - Keywords
+    LET = "LET"
+    ACT = "ACT"
+    RETURN = "RETURN"
+
+    #Syntax - Typing
+    TYPE = "TYPE"
 
 
 
@@ -45,3 +64,34 @@ class Token:
     def __repr__(self):
         return str(self)
             
+
+KEYWORDS: dict[str, TokenType] = {
+    "let":TokenType.LET,
+    "act":TokenType.ACT,
+    "return":TokenType.RETURN
+
+}
+
+ALT_KEYWORDS: dict[str, TokenType]={
+    "mark": TokenType.LET,
+    "=": TokenType.EQ,
+    ";" : TokenType.SEMICOLON,
+    "act":TokenType.ACT,
+    "return":TokenType.RETURN,
+    "=>": TokenType.ARROW
+}
+
+TYPE_KEYWORDS: list[str] = ["int", "float"]
+
+def lookup_ident(ident:str) -> TokenType:
+    tt: TokenType | None = KEYWORDS.get(ident)
+    if tt is not None:
+        return tt
+    tt: TokenType|None = ALT_KEYWORDS.get(ident)
+    if tt is not None:
+        return tt
+
+    if ident in TYPE_KEYWORDS:
+        return TokenType.TYPE
+    
+    return TokenType.IDENT

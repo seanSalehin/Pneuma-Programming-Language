@@ -5,9 +5,15 @@ from enum import Enum
 class NodeType(Enum):
     Program="Program"
     ExpressionStatement = "ExpressionStatement"
+    LetStatement = "LetStatement"
     InfixExpression = "InfixExpression"
     IntegerLiteral = "IntegerLiteral"
     FloatLiteral = "FloatLiteral"
+    IdentifierLiteral = "IdentifierLiteral"
+    FunctionStatement = "FunctionStatement"
+    BlockStatement = "BlockStatement"
+    ReturnStatement = "ReturnStatement"
+    AssignStatement = "AssignStatement"
 
 
 
@@ -45,6 +51,84 @@ class Program(Node):
             "statements":[{stmt.type().value:stmt.json()}for stmt in self.statements]
         }
     
+
+class LetStatement(Statement):
+    def __init__(self, name:Expression = None, value:Expression=None, value_type:str=None) -> None:
+        self.name=name
+        self.value=value
+        self.value_type=value_type
+
+    def type(self) -> NodeType:
+        return NodeType.LetStatement
+
+    def json(self) -> dict:
+        return{
+            "type":self.type().value,
+            "name":self.name.json(),
+            "value":self.value.json(),
+            "value_type":self.value_type
+        }
+    
+
+class BlockStatement(Statement):
+    def __init__(self, statements=None):
+        self.statements = statements if statements is not None else []
+    def type(self):
+        return NodeType.BlockStatement
+    def json(self):
+        return{
+            "type": self.type().value,
+            "statement": [stmt.json() for stmt in self.statements]
+        }
+    
+
+class ReturnStatement(Statement):
+    def __init__(self, return_value=Expression):
+        self.return_value = return_value
+    def type(self):
+        return NodeType.ReturnStatement
+    def json(self):
+        return{
+            "type": self.type().value,
+            "return_value": self.return_value.json()
+        }
+    
+
+
+class FunctionStatement(Statement):
+    def __init__(self, parameters=[], body:BlockStatement = None, name=None, return_type=None ):
+        self.parameters=parameters
+        self.body=body
+        self.name=name
+        self.return_type=return_type
+    def type(self):
+        return NodeType.FunctionStatement
+    def json(self):
+        return{
+            "type": self.type().value,
+            "name": self.name.json(),
+            "return_type": self.return_type,
+            "parameters":[p.json() for p in self.parameters],
+            "body":self.body.json() if self.body is not None else None
+        }
+    
+
+
+class AssignStatement(Statement):
+    def __init__(self, ident:Expression=None, right_value = None ):
+        self.ident = ident
+        self.right_value=right_value
+    def type(self):
+        return NodeType.AssignStatement
+    def json(self):
+        return{
+            "type": self.type().value,
+            "ident": self.ident.json(),
+            "right_value":self.right_value.json()
+        }
+
+
+
 
 #statement
 class ExpressionStatement(Statement):
@@ -95,6 +179,7 @@ class IntegerLiteral(Expression):
         }
     
 
+
 class FloatLiteral(Expression):
     def __init__(self, value):
         self.value=value
@@ -106,4 +191,20 @@ class FloatLiteral(Expression):
         return {
             "type":self.type().value,
             "value":self.value
+        }
+    
+
+
+#IdentifierLiteral
+class IdentifierLiteral(Expression):
+    def __init__(self, value):
+        self.value = value
+
+    def type(self):
+        return NodeType.IdentifierLiteral
+
+    def json(self):
+        return {
+            "type": self.type().value,
+            "value": self.value
         }

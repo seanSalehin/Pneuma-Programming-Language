@@ -1,0 +1,22 @@
+Pneuma => JIT programming language
+
+varibles => Mark
+Declearing a variable :
+mark x:int = 10;
+
+
+Function : 
+act main() => int{
+    mark x: int = 4;
+
+    return x;
+}
+
+
+Assignment:
+act main() => int{
+    mark x:int = 40;
+    x = x * 2;
+    x = x * 2;
+    return x;
+}

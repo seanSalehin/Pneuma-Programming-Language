@@ -2,16 +2,56 @@
     "type": "Program",
     "statements": [
         {
-            "InfixExpression": {
-                "type": "InfixExpression",
-                "left_node": {
-                    "type": "IntegerLiteral",
-                    "value": 5
+            "FunctionStatement": {
+                "type": "FunctionStatement",
+                "name": {
+                    "type": "IdentifierLiteral",
+                    "value": "main"
                 },
-                "operatpr": "+",
-                "right_node": {
-                    "type": "IntegerLiteral",
-                    "value": 5
+                "return_type": "int",
+                "parameters": [],
+                "body": {
+                    "type": "BlockStatement",
+                    "statement": [
+                        {
+                            "type": "LetStatement",
+                            "name": {
+                                "type": "IdentifierLiteral",
+                                "value": "x"
+                            },
+                            "value": {
+                                "type": "IntegerLiteral",
+                                "value": 40
+                            },
+                            "value_type": "int"
+                        },
+                        {
+                            "type": "AssignStatement",
+                            "ident": {
+                                "type": "IdentifierLiteral",
+                                "value": "x"
+                            },
+                            "right_value": {
+                                "type": "InfixExpression",
+                                "left_node": {
+                                    "type": "IdentifierLiteral",
+                                    "value": "x"
+                                },
+                                "operatpr": "*",
+                                "right_node": {
+                                    "type": "IntegerLiteral",
+                                    "value": 2
+                                }
+                            }
+                        },
+                        {
+                            "type": "ReturnStatement",
+                            "return_value": {
+                                "type": "IdentifierLiteral",
+                                "value": "x"
+                            }
+                        }
+                    ]
                 }
             }
         }

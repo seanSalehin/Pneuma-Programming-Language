@@ -2,7 +2,8 @@ from Lexer import Lexer
 from Token import Token, TokenType
 from typing import Callable
 from enum import Enum, auto
-from AST import Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral
+from AST import Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, LetStatement
+from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement
 
 # precedence Type => evels of operator priority from lowest to highest
 class PresedanceType(Enum):
@@ -36,11 +37,14 @@ class Parser:
         self.errors=[]
         self.current_token=None
         self.peek_token=None
+
         self.prefix_parse={
+            TokenType.IDENT: self.__parser_identifier,
             TokenType.INT:self.__parse_int_literal,
             TokenType.FLOAT:self.__parse_float_literal,
             TokenType.LEFTPARENTHESES:self.__parse_grouped_expression,
         }
+
         self.infix_parse={
             TokenType.MINUS:self.__parse_infix_expression,
             TokenType.MODULUS: self.__parse_infix_expression,
@@ -59,6 +63,9 @@ class Parser:
         #Move current token to the peek token and get the next token from lexer
         self.current_token = self.peek_token
         self.peek_token = self.lexer.next_token()
+
+    def __current_token(self, tt:TokenType):
+        return self.current_token.type == tt
         
 
 
@@ -119,7 +126,18 @@ class Parser:
 
     #statement methods
     def __parse_statement(self):
-        return self.__parse_expression_statement()
+        if self.current_token.type ==TokenType.IDENT and self.__peek_token(TokenType.EQ):
+            return self.__parse_assignment_statement()
+        
+        match self.current_token.type:
+            case TokenType.LET:
+                return self.__parse_let_statement()
+            case TokenType.ACT:
+                return self.__parser_function_statement()
+            case TokenType.RETURN:
+                return self.__parser_return_statement()
+            case _:
+                return self.__parse_expression_statement()
     
     
     def __parse_expression_statement(self):
@@ -133,6 +151,112 @@ class Parser:
 
 
 
+
+    def __parse_let_statement(self):
+        # mark a:int = 10;
+        stmt: LetStatement=LetStatement()
+        if not self.__expect_peek(TokenType.IDENT):
+            #mark
+            return None
+
+        stmt.name=IdentifierLiteral(value=self.current_token.literal)
+             #a
+
+        if not self.__expect_peek(TokenType.COLON):
+            #:
+            return None
+        
+        if not self.__expect_peek(TokenType.TYPE):
+            #int
+            return None
+        
+        stmt.value_type = self.current_token.literal
+            # error 
+        
+        if not self.__expect_peek(TokenType.EQ):
+            #=
+            return None
+        self.__next_token()
+
+        stmt.value=self.__parse_expression(PresedanceType.P_LOWEST)
+
+        while not self.__current_token_is(TokenType.SEMICOLON) and not self.__current_token_is(TokenType.EOF):
+            self.__next_token()
+
+        return stmt
+    
+
+
+    def __parser_function_statement(self):
+        #act test()=>int{return 10;}
+        stmt = FunctionStatement()
+        if not self.__expect_peek(TokenType.IDENT):
+            return None
+        
+        stmt.name = IdentifierLiteral(value=self.current_token.literal)
+
+        if not self.__expect_peek(TokenType.LEFTPARENTHESES):
+            return None
+        stmt.parameters=[] #TODO
+
+        if not self.__expect_peek(TokenType.RIGHTPARENTHESES):
+            return None
+        
+        if not self.__expect_peek(TokenType.ARROW):
+            return None
+        
+        if not self.__expect_peek(TokenType.TYPE):
+            return None
+        
+        stmt.return_type=self.current_token.literal
+
+        if not self.__expect_peek(TokenType.LBRACE):
+            return None
+        
+        stmt.body=self.__parse_block_statement()
+        return stmt
+        
+
+
+
+ 
+    def __parser_return_statement(self):
+        stmt = ReturnStatement()
+        self.__next_token()
+        stmt.return_value=self.__parse_expression(PresedanceType.P_LOWEST)
+        if not self.__expect_peek(TokenType.SEMICOLON):
+            return None
+        return stmt
+
+
+
+    def __parse_block_statement(self):
+        block_stmt = BlockStatement()
+        self.__next_token()
+        while not self.__current_token_is(TokenType.RBRACE) and not self.__current_token_is(TokenType.EOF):
+            stmt = self.__parse_statement()
+            if stmt is not None:
+                block_stmt.statements.append(stmt)
+            self.__next_token()
+        return block_stmt
+    
+
+    def __parse_assignment_statement(self):
+        stmt = AssignStatement()
+        stmt.ident = IdentifierLiteral(value = self.current_token.literal)
+        self.__next_token()
+        self.__next_token()
+        stmt.right_value = self.__parse_expression(PresedanceType.P_LOWEST)
+        self.__next_token()
+        return stmt
+
+        
+
+
+
+    def __current_token_is(self, tt: TokenType):
+        return self.current_token.type == tt
+        
     #Expression method
     def __parse_expression(self, precedence):
         prefix_function=self.prefix_parse.get(self.current_token.type)
@@ -178,8 +302,11 @@ class Parser:
         return int_lit
     
 
+    def __parser_identifier(self):
+        return IdentifierLiteral(value=self.current_token.literal)
+    
+
     def __parse_float_literal(self):
-        
         try:
             value=float(self.current_token.literal)
             float_lit=FloatLiteral(value)

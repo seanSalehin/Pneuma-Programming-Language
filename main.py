@@ -1,6 +1,7 @@
 from Lexer import Lexer
 from parser import Parser
 from AST import Program
+import time
 import json
 from compiler import Compiler
 from llvmlite import ir
@@ -11,10 +12,11 @@ from ctypes import CFUNCTYPE, c_int, c_float
 Lexer_Bug=False
 Parse_Bug=False
 Compiler_Bug = True
+RUN_CODE = True
 
 
 if __name__=='__main__':
-    with open("Test/compiler.Pneuma", 'r') as f:
+    with open("Test/function.Pneuma", 'r') as f:
         code=f.read()
 
 
@@ -51,3 +53,26 @@ if __name__=='__main__':
     if Compiler_Bug:
         with open("debug/ir.ll", "w") as f:
             f.write(str(module))
+    if RUN_CODE:
+        llvm.initialize()
+        llvm.initialize_native_target()
+        llvm.initialize_native_asmprinter()
+
+        try:
+            llvm_ir_parsed = llvm.parse_assembly(str(module))
+            llvm_ir_parsed.verify()
+        except Exception as e:
+            print(e)
+            raise
+
+        target_machine = llvm.Target.from_default_triple().create_target_machine()
+
+        engine = llvm.create_mcjit_compiler(llvm_ir_parsed, target_machine)
+        engine.finalize_object()
+
+        entry = engine.get_function_address('main')
+        cfunc = CFUNCTYPE(c_int)(entry)
+        st=time.time()
+        result = cfunc()
+        et = time.time()
+        print(f'\n\nResult: {result}\n===Executed in {round((et-st)*1000, 6)}  ms\n')
