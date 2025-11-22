@@ -10,13 +10,13 @@ from ctypes import CFUNCTYPE, c_int, c_float
 
 
 Lexer_Bug=False
-Parse_Bug=False
-Compiler_Bug = True
-RUN_CODE = True
+Parse_Bug=True
+Compiler_Bug = False
+RUN_CODE = False
 
 
 if __name__=='__main__':
-    with open("Test/function.Pneuma", 'r') as f:
+    with open("Test/functionTwo.Pneuma", 'r') as f:
         code=f.read()
 
 

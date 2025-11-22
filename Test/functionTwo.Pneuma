@@ -1,0 +1,9 @@
+act main() => int {
+  mark x:int = 50;
+  if x==19{
+    x=43;
+  }else{
+    x=12;
+  }
+  return x;
+}

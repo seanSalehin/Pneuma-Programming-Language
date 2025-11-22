@@ -44,7 +44,6 @@ class Lexer:
         return Token(type=tokens, literal=literal, line_number=self.line_number, position=self.position)
 
 
-
     def __is_digit(self, ch):
         #if our tokens were not inside (*^%+-) then this function check that if current character is an intiger or not
         return '0' <=ch and ch <='9'
@@ -100,14 +99,16 @@ class Lexer:
         match self.current_character:
             case'+':
                 token=self.__new_token(TokenType.PLUS, self.current_character)
+
             case'-':
                 #Handle arrow for functions
                 if self.__peek_char()=='>':
                     ch=self.current_character
                     self.__read_char()
-                    tok = self.__new_token(TokenType.Arrow, ch + self.current_character)
+                    tok = self.__new_token(TokenType.ARROW, ch + self.current_character)
                 else:
                     token=self.__new_token(TokenType.MINUS, self.current_character)
+
             case'*':
                 token=self.__new_token(TokenType.ASTERISK, self.current_character)
             case'/':
@@ -115,14 +116,45 @@ class Lexer:
             case'^':
                 token=self.__new_token(TokenType.POW, self.current_character)
             case'%':
-                token=self.__new_token(TokenType.MODULUS, self.current_character)    
+                token=self.__new_token(TokenType.MODULUS, self.current_character)  
+
+            case '<':
+                if self.__peek_char()=='=':
+                    ch=self.current_character
+                    self.__read_char()
+                    tok = self.__new_token(TokenType.LT_EQ, ch+self.current_character)
+                else:
+                    tok = self.__new_token(TokenType.LT, self.current_character)
+
+            case '>':
+                    if self.__peek_char()=='=':
+                        ch=self.current_character
+                        self.__read_char()
+                        tok = self.__new_token(TokenType.GT_EQ, ch+self.current_character)
+                    else:
+                        tok = self.__new_token(TokenType.GT, self.current_character)
+
             case '=':
-                if self.__peek_char() == '>':
+                if self.__peek_char() == '=':
+                    ch = self.current_character
+                    self.__read_char()
+                    token = self.__new_token(TokenType.EQ_EQ, ch + self.current_character)
+                elif self.__peek_char() == '>':
                     ch = self.current_character
                     self.__read_char()
                     token = self.__new_token(TokenType.ARROW, ch + self.current_character)
                 else:
-                    token = self.__new_token(TokenType.EQ, self.current_character)    
+                    token = self.__new_token(TokenType.EQ, self.current_character)
+
+            case '!':
+                if self.__peek_char()=='=':
+                    ch=self.current_character
+                    self.__read_char()
+                    tok = self.__new_token(TokenType.NOT_EQ, ch + self.current_character)
+                else:
+                    #TODO
+                    tok = self.__new_token(TokenType.ILLEGAL, self.current_character)
+
             case ':':
                 token=self.__new_token(TokenType.COLON, self.current_character)       
             case'(':

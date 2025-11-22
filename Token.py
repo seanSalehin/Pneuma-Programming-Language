@@ -29,6 +29,15 @@ class TokenType(Enum):
     EQ = "EQ"
 
 
+    #Comparison SYmbols
+    LT = '<'
+    GT = '>'
+    EQ_EQ = '=='
+    NOT_EQ = '!='
+    LT_EQ = '<='
+    GT_EQ = '>='
+
+
     #Symbols
     COLON = "COLON"
     SEMICOLON = "SEMICOLON"
@@ -43,6 +52,10 @@ class TokenType(Enum):
     LET = "LET"
     ACT = "ACT"
     RETURN = "RETURN"
+    IF = "IF"
+    ELSE = "ELSE"
+    TRUE = "TRUE"
+    FALSE = "FALSE"
 
     #Syntax - Typing
     TYPE = "TYPE"
@@ -68,7 +81,12 @@ class Token:
 KEYWORDS: dict[str, TokenType] = {
     "let":TokenType.LET,
     "act":TokenType.ACT,
-    "return":TokenType.RETURN
+    "return":TokenType.RETURN,
+    "if":TokenType.IF,
+    "else":TokenType.ELSE,
+    "true":TokenType.TRUE,
+    "false":TokenType.FALSE
+
 
 }
 
@@ -78,7 +96,9 @@ ALT_KEYWORDS: dict[str, TokenType]={
     ";" : TokenType.SEMICOLON,
     "act":TokenType.ACT,
     "return":TokenType.RETURN,
-    "=>": TokenType.ARROW
+    "=>": TokenType.ARROW,
+    "if":TokenType.IF,
+    "else":TokenType.ELSE
 }
 
 TYPE_KEYWORDS: list[str] = ["int", "float"]

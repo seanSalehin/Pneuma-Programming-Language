@@ -3,7 +3,7 @@ from Token import Token, TokenType
 from typing import Callable
 from enum import Enum, auto
 from AST import Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, LetStatement
-from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement
+from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement, IfStatement, BooleanLiteral
 
 # precedence Type => evels of operator priority from lowest to highest
 class PresedanceType(Enum):
@@ -28,6 +28,12 @@ PRECEDENCES:dict[TokenType, PresedanceType]={
      TokenType.ASTERISK:PresedanceType.P_PRODUCT,
      TokenType.MODULUS:PresedanceType.P_PRODUCT,
      TokenType.POW:PresedanceType.P_EXPONENT,
+     TokenType.EQ_EQ:PresedanceType.P_EQUALS,
+     TokenType.NOT_EQ:PresedanceType.P_EQUALS,
+     TokenType.LT:PresedanceType.P_LESSGREATER,
+     TokenType.GT:PresedanceType.P_LESSGREATER,
+     TokenType.LT_EQ:PresedanceType.P_LESSGREATER,
+     TokenType.GT_EQ:PresedanceType.P_LESSGREATER,
 }
 
 
@@ -39,10 +45,13 @@ class Parser:
         self.peek_token=None
 
         self.prefix_parse={
-            TokenType.IDENT: self.__parser_identifier,
+            TokenType.IDENT: self.__parse_identifier,
             TokenType.INT:self.__parse_int_literal,
             TokenType.FLOAT:self.__parse_float_literal,
             TokenType.LEFTPARENTHESES:self.__parse_grouped_expression,
+            TokenType.IF:self.__parse_if_statement,
+            TokenType.TRUE:self.__parse_boolean,
+            TokenType.FALSE:self.__parse_boolean,
         }
 
         self.infix_parse={
@@ -52,7 +61,16 @@ class Parser:
             TokenType.PLUS: self.__parse_infix_expression,
             TokenType.POW: self.__parse_infix_expression,
             TokenType.ASTERISK: self.__parse_infix_expression,
+            TokenType.EQ_EQ: self.__parse_infix_expression,
+            TokenType.NOT_EQ: self.__parse_infix_expression,
+            TokenType.LT: self.__parse_infix_expression,
+            TokenType.GT: self.__parse_infix_expression,
+            TokenType.LT_EQ: self.__parse_infix_expression,
+            TokenType.GT_EQ: self.__parse_infix_expression,
+
         }
+
+
         #load the first two tokens (Calls twice)
         self.__next_token()
         self.__next_token()
@@ -93,7 +111,10 @@ class Parser:
 
     def __no_prefix_parse_error(self, tt):
         #error when no parsing function exists for the current token
-        self.errors.append(f"Expected next token to be {tt}, not {self.peek_token.type}")
+        if self.current_token:
+            self.errors.append(f"No prefix parse function for {tt} found, current token is {self.current_token.type}")
+        else:
+            self.errors.append(f"No prefix parse function for {tt} found, current token is None")
 
 
 
@@ -180,7 +201,7 @@ class Parser:
 
         stmt.value=self.__parse_expression(PresedanceType.P_LOWEST)
 
-        while not self.__current_token_is(TokenType.SEMICOLON) and not self.__current_token_is(TokenType.EOF):
+        while not self.__current_token(TokenType.SEMICOLON) and not self.__current_token(TokenType.EOF):
             self.__next_token()
 
         return stmt
@@ -233,7 +254,7 @@ class Parser:
     def __parse_block_statement(self):
         block_stmt = BlockStatement()
         self.__next_token()
-        while not self.__current_token_is(TokenType.RBRACE) and not self.__current_token_is(TokenType.EOF):
+        while not self.__current_token(TokenType.RBRACE) and not self.__current_token_is(TokenType.EOF):
             stmt = self.__parse_statement()
             if stmt is not None:
                 block_stmt.statements.append(stmt)
@@ -257,6 +278,26 @@ class Parser:
     def __current_token_is(self, tt: TokenType):
         return self.current_token.type == tt
         
+
+
+    def __parse_if_statement(self):
+        condition = None
+        consequence = None
+        alternative = None
+
+        self.__next_token()
+        condition=self.__parse_expression(PresedanceType.P_LOWEST)
+        if not self.__expect_peek(TokenType.LBRACE):
+            return None
+        consequence=self.__parse_block_statement()
+        if self.__peek_token(TokenType.ELSE):
+            self.__next_token()
+            if not self.__expect_peek(TokenType.LBRACE):
+                return None
+            alternative = self.__parse_block_statement()
+        return IfStatement(condition, consequence, alternative)
+        
+
     #Expression method
     def __parse_expression(self, precedence):
         prefix_function=self.prefix_parse.get(self.current_token.type)
@@ -302,7 +343,7 @@ class Parser:
         return int_lit
     
 
-    def __parser_identifier(self):
+    def __parse_identifier(self):
         return IdentifierLiteral(value=self.current_token.literal)
     
 
@@ -314,3 +355,7 @@ class Parser:
             self.errors.append("could not parse this as an Intiger")
             return None
         return float_lit
+    
+
+    def __parse_boolean(self):
+        return BooleanLiteral(value=self.__current_token(TokenType.TRUE))

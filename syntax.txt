@@ -1,8 +1,10 @@
 Pneuma => JIT programming language
 
+
 varibles => Mark
 Declearing a variable :
 mark x:int = 10;
+
 
 
 Function : 
@@ -13,6 +15,8 @@ act main() => int{
 }
 
 
+
+
 Assignment:
 act main() => int{
     mark x:int = 40;
@@ -20,3 +24,23 @@ act main() => int{
     x = x * 2;
     return x;
 }
+
+
+
+If statement
+act main() => int {
+    mark a:int = 5;
+    if a ==5{
+        a = 56;
+    }else{
+        a=57;
+    }
+    return a;
+}
+
+
+function declarations 
+act test()=>int{return 10;} 
+ 
+
+comparisons  if a == b { ... }
