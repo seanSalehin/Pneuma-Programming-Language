@@ -89,6 +89,8 @@ class Parser:
 
     def __peek_token(self, tt):
         #check the type of the next token
+        if self.peek_token is None:
+            return False
         return self.peek_token.type == tt
     
 
@@ -119,7 +121,9 @@ class Parser:
 
 
     def __current_precedence(self):
-        prec = PRECEDENCES.get(self.peek_token.type)
+        if self.current_token is None:
+            return PresedanceType.P_LOWEST
+        prec = PRECEDENCES.get(self.current_token.type)
         if prec is None:
             #return the lowest by default if the prec in None
             return PresedanceType.P_LOWEST
@@ -128,6 +132,8 @@ class Parser:
 
 
     def __peek_precedence(self):
+        if self.peek_token is None:
+            return PresedanceType.P_LOWEST
         prec = PRECEDENCES.get(self.peek_token.type)
         if prec is None:
             return PresedanceType.P_LOWEST
@@ -305,7 +311,10 @@ class Parser:
             self.__no_prefix_parse_error(self.current_token.type)
             return None
         left_expr=prefix_function()
-        while not self.__peek_token(TokenType.SEMICOLON) and precedence.value < self.__peek_precedence().value:
+
+        while (self.peek_token is not None and 
+            not self.__peek_token(TokenType.SEMICOLON) and 
+            precedence.value < self.__peek_precedence().value):
             infix_function=self.infix_parse.get(self.peek_token.type)
             if infix_function is None:
                 return left_expr

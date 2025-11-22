@@ -10,9 +10,9 @@ from ctypes import CFUNCTYPE, c_int, c_float
 
 
 Lexer_Bug=False
-Parse_Bug=True
+Parse_Bug=False
 Compiler_Bug = False
-RUN_CODE = False
+RUN_CODE = True
 
 
 if __name__=='__main__':

@@ -150,10 +150,10 @@ class Lexer:
                 if self.__peek_char()=='=':
                     ch=self.current_character
                     self.__read_char()
-                    tok = self.__new_token(TokenType.NOT_EQ, ch + self.current_character)
+                    token  = self.__new_token(TokenType.NOT_EQ, ch + self.current_character)
                 else:
                     #TODO
-                    tok = self.__new_token(TokenType.ILLEGAL, self.current_character)
+                    token  = self.__new_token(TokenType.ILLEGAL, self.current_character)
 
             case ':':
                 token=self.__new_token(TokenType.COLON, self.current_character)       
