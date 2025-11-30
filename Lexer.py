@@ -156,7 +156,9 @@ class Lexer:
                     token  = self.__new_token(TokenType.ILLEGAL, self.current_character)
 
             case ':':
-                token=self.__new_token(TokenType.COLON, self.current_character)       
+                token=self.__new_token(TokenType.COLON, self.current_character)    
+            case ',':
+                token=self.__new_token(TokenType.COMMA, self.current_character)   
             case'(':
                 token=self.__new_token(TokenType.LEFTPARENTHESES, self.current_character)
             case')':

@@ -1,5 +1,5 @@
 act main() => int {
-  mark x:int = 50;
+  mark x:int = 19;
   if x!=19{
     x=43;
   }else{

@@ -16,7 +16,6 @@ act main() => int{
 
 
 
-
 Assignment:
 act main() => int{
     mark x:int = 40;
@@ -39,6 +38,7 @@ act main() => int {
 }
 
 
+
 function declarations 
 act test()=>int{return 10;} 
  
@@ -46,3 +46,30 @@ act test()=>int{return 10;}
 comparisons  if a == b { ... }
 
 
+
+!=
+act main() => int {
+  mark x:int = 50;
+  if x!=19{
+    x=43;
+  }else{
+    x=12;
+  }
+  return x;
+}
+
+
+
+Calling a function + parameter
+
+act TestFunction(a:int, b:int)=>int{
+    return a+b
+}
+
+act main()=>int{
+    return TestFunction(1, 2); 
+}
+
+
+
+strings + printf

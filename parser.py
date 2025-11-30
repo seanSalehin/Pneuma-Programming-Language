@@ -3,7 +3,7 @@ from Token import Token, TokenType
 from typing import Callable
 from enum import Enum, auto
 from AST import Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, LetStatement
-from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement, IfStatement, BooleanLiteral
+from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement, IfStatement, BooleanLiteral, CallExpression, FunctionParameter
 
 # precedence Type => evels of operator priority from lowest to highest
 class PresedanceType(Enum):
@@ -34,6 +34,7 @@ PRECEDENCES:dict[TokenType, PresedanceType]={
      TokenType.GT:PresedanceType.P_LESSGREATER,
      TokenType.LT_EQ:PresedanceType.P_LESSGREATER,
      TokenType.GT_EQ:PresedanceType.P_LESSGREATER,
+     TokenType.LEFTPARENTHESES:PresedanceType.P_CALL,
 }
 
 
@@ -67,7 +68,7 @@ class Parser:
             TokenType.GT: self.__parse_infix_expression,
             TokenType.LT_EQ: self.__parse_infix_expression,
             TokenType.GT_EQ: self.__parse_infix_expression,
-
+            TokenType.LEFTPARENTHESES:self.__parse_call_expression,
         }
 
 
@@ -224,10 +225,7 @@ class Parser:
 
         if not self.__expect_peek(TokenType.LEFTPARENTHESES):
             return None
-        stmt.parameters=[] #TODO
-
-        if not self.__expect_peek(TokenType.RIGHTPARENTHESES):
-            return None
+        stmt.parameters= self.__parse_function_parameters()
         
         if not self.__expect_peek(TokenType.ARROW):
             return None
@@ -244,9 +242,38 @@ class Parser:
         return stmt
         
 
+    def __parse_function_parameters(self):
+        params = []
+        if self.__peek_token(TokenType.RIGHTPARENTHESES):
+            self.__next_token()  # Consume the RIGHTPARENTHESES
+            return params
+        
+        self.__next_token()  # Move to first parameter
+        
+        # Parse first parameter
+        param_name = FunctionParameter(name=self.current_token.literal)
+        if not self.__expect_peek(TokenType.COLON):
+            return None
+        self.__next_token()
+        param_name.value_type = self.current_token.literal        
+        params.append(param_name)            
+        # Parse additional parameters
+        while self.__peek_token(TokenType.COMMA):
+            self.__next_token()  # Move to COMMA
+            self.__next_token()  # Move to next parameter name
+            param = FunctionParameter(name= self.current_token.literal)
+            if not self.__expect_peek(TokenType.COLON):
+                return None
+            self.__next_token()
+            param.value_type = self.current_token.literal
+            params.append(param)        
+        # Expect and consume the closing parenthesis
+        if not self.__expect_peek(TokenType.RIGHTPARENTHESES):
+            return None
+        return params
 
 
- 
+
     def __parser_return_statement(self):
         stmt = ReturnStatement()
         self.__next_token()
@@ -260,7 +287,7 @@ class Parser:
     def __parse_block_statement(self):
         block_stmt = BlockStatement()
         self.__next_token()
-        while not self.__current_token(TokenType.RBRACE) and not self.__current_token_is(TokenType.EOF):
+        while not self.__current_token(TokenType.RBRACE) and not self.__current_token(TokenType.EOF):
             stmt = self.__parse_statement()
             if stmt is not None:
                 block_stmt.statements.append(stmt)
@@ -339,6 +366,32 @@ class Parser:
             #if the last one is not a parentheses => syntax error
             return None
         return expr
+    
+
+    def __parse_call_expression(self, function):
+        expr = CallExpression(function=function)
+        expr.arguments = self.__parse_expression_list(TokenType.RIGHTPARENTHESES)
+        return expr
+    
+
+    def __parse_expression_list(self, end):
+        e_list = []
+        if self.__peek_token(end):
+            self.__next_token()
+            return e_list
+        self.__next_token()
+        e_list.append(self.__parse_expression(PresedanceType.P_LOWEST))
+        while self.__peek_token(TokenType.COMMA):
+            self.__next_token()
+            self.__next_token()
+            e_list.append(self.__parse_expression(PresedanceType.P_LOWEST))
+        if not self.__expect_peek(end):
+            return None
+        return e_list
+
+
+
+
     
 
     #prefix methods

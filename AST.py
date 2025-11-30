@@ -16,6 +16,8 @@ class NodeType(Enum):
     AssignStatement = "AssignStatement"
     IfStatement = "IfStatement"
     BooleanLiteral = "BooleanLiteral"
+    CallExpression = "CallExpression"
+    FunctionParameter = "FunctionParameter"
 
 
 class Node(ABC):
@@ -146,6 +148,19 @@ class IfStatement(Statement):
 
 
 
+class FunctionParameter(Expression):
+    def __init__(self, name, value_type=None):
+        self.name=name
+        self.value_type=value_type
+    def type(self):
+        return NodeType.FunctionParameter
+    def json(self):
+        return {
+            "type":self.type().value,
+            "name":self.name,
+            "value_type":self.value_type
+        }
+
 
 #statement
 class ExpressionStatement(Statement):
@@ -176,8 +191,25 @@ class InfixExpression(Expression):
         return {
             "type":self.type().value,
             "left_node":self.left_node.json(),
-            "operatpr":self.operator,
+            "operator":self.operator,
             "right_node":self.right_node.json()
+        }
+    
+
+
+class CallExpression(Expression):
+    def __init__(self, function = None, arguments=None):
+        self.function=function
+        self.arguments = arguments
+
+    def type(self):
+        return NodeType.CallExpression
+    
+    def json(self):
+        return {
+            "type":self.type().value,
+            "function":self.function.json(),
+            "arguments":[arg.json() for arg in self.arguments]
         }
     
 

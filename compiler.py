@@ -2,7 +2,7 @@ from llvmlite import ir
 
 from AST import NodeType, Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral
 from Environment import Environment
-from AST import FunctionStatement, BlockStatement, ReturnStatement, AssignStatement, IfStatement, BooleanLiteral
+from AST import FunctionStatement, BlockStatement, ReturnStatement, AssignStatement, IfStatement, BooleanLiteral, CallExpression, FunctionParameter
 
 class Compiler:
 
@@ -68,6 +68,12 @@ class Compiler:
             case NodeType.IfStatement:
                 self.__visit_if_statement(node)
 
+            case NodeType.InfixExpression:
+                self.__visit_infixExpression(node)
+            
+            case NodeType.CallExpression:
+                self.__visit_call_expression(node)
+
     
 
 
@@ -115,8 +121,8 @@ class Compiler:
         name = node.name.value
         body = node.body
         params=node.parameters
-        params_names=[p.value for p in params]
-        param_types = []
+        params_names=[p.name for p in params]
+        param_types = [self.type_map[p.value_type]for p in params]
         return_type = self.type_map[node.return_type]
 
         fnty=ir.FunctionType(return_type, param_types)
@@ -124,8 +130,22 @@ class Compiler:
         block = func.append_basic_block(f'{name}_entry')
         previous_builder = self.builder
         self.builder=ir.IRBuilder(block)
+
+        params_ptr=[]
+        for i, typ in enumerate(param_types):
+            ptr=self.builder.alloca(typ)
+            self.builder.store(func.args[i], ptr)
+            params_ptr.append(ptr)
+
+
         previous_env=self.env
-        self.env=Environment(parent=self.env)
+        self.env=Environment(parent=previous_env)
+
+        for i,x in enumerate(zip(param_types, params_names)):
+            typ = param_types[i]
+            ptr=params_ptr[i]
+            self.env.define(x[1], ptr, typ)
+
         self.env.define(name, func, return_type)
         self.compile(body)
         self.env=previous_env
@@ -246,6 +266,25 @@ class Compiler:
 
         return value, Type
 
+    def __visit_call_expression(self, node):
+        name = node.function.value
+        params = node.arguments
+        args =[]
+        types=[]
+        if len(params)>0:
+            for x in params:
+                p_val, p_type = self.__resolve_value(x)
+                args.append(p_val)
+                types.append(p_type)
+        match name:
+            case _:
+                func, ret_type = self.env.lookup(name)
+                ret = self.builder.call(func, args)
+        return ret, ret_type
+        
+
+
+
     def __resolve_value(self, node, value_type=None):
         match node.type():
             case NodeType.IntegerLiteral:
@@ -262,10 +301,18 @@ class Compiler:
                 return self.__visit_infixExpression(node)
             
             case NodeType.IdentifierLiteral:
-                node=node
-                ptr, Type = self.env.lookup(node.value)
+                name = node.value
+                result = self.env.lookup(name)
+                if result is None:
+                    raise Exception(f"Compile error: undefined identifier '{name}' (in node {node})")
+                ptr, Type = result
                 return self.builder.load(ptr), Type
             
             case NodeType.BooleanLiteral:
                 node = node
                 return ir.Constant(ir.IntType(1), 1 if node.value else 0), ir.IntType(1)
+            
+            case NodeType.InfixExpression:
+                return self.__visit_infixExpression(node)
+            case NodeType.CallExpression:
+                return self.__visit_call_expression(node)

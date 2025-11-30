@@ -16,7 +16,7 @@ RUN_CODE = True
 
 
 if __name__=='__main__':
-    with open("Test/functionTwo.Pneuma", 'r') as f:
+    with open("Test/functionThree.Pneuma", 'r') as f:
         code=f.read()
 
 
