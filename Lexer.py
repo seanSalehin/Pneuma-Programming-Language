@@ -105,7 +105,7 @@ class Lexer:
                 if self.__peek_char()=='>':
                     ch=self.current_character
                     self.__read_char()
-                    tok = self.__new_token(TokenType.ARROW, ch + self.current_character)
+                    token  = self.__new_token(TokenType.ARROW, ch + self.current_character)
                 else:
                     token=self.__new_token(TokenType.MINUS, self.current_character)
 
@@ -122,17 +122,17 @@ class Lexer:
                 if self.__peek_char()=='=':
                     ch=self.current_character
                     self.__read_char()
-                    tok = self.__new_token(TokenType.LT_EQ, ch+self.current_character)
+                    token  = self.__new_token(TokenType.LT_EQ, ch+self.current_character)
                 else:
-                    tok = self.__new_token(TokenType.LT, self.current_character)
+                    token  = self.__new_token(TokenType.LT, self.current_character)
 
             case '>':
                     if self.__peek_char()=='=':
                         ch=self.current_character
                         self.__read_char()
-                        tok = self.__new_token(TokenType.GT_EQ, ch+self.current_character)
+                        token  = self.__new_token(TokenType.GT_EQ, ch+self.current_character)
                     else:
-                        tok = self.__new_token(TokenType.GT, self.current_character)
+                        token  = self.__new_token(TokenType.GT, self.current_character)
 
             case '=':
                 if self.__peek_char() == '=':

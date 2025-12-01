@@ -19,6 +19,7 @@ class NodeType(Enum):
     CallExpression = "CallExpression"
     FunctionParameter = "FunctionParameter"
     StringLiteral = "StringLiteral"
+    WhileStatement = "WhileStatement"
 
 
 class Node(ABC):
@@ -146,7 +147,32 @@ class IfStatement(Statement):
             "consequence": self.consequence.json(),
             "alternative": self.alternative.json() if self.alternative is not None else None
         }
+    
+class WhileStatement(Statement):
+    def __init__(self, condition, body=None):
+        self.condition = condition
+        self.body = body 
+    def type(self):
+        return NodeType.WhileStatement
+    def json(self):
+        return {
+        "type": self.type().value,
+        "condition": self.condition.json(),
+        "body": self.body.json()
+        }
+    
+    """
+    act main()=>int{
+    mark x:int =0;
 
+    while x<10{                       ====>condition
+        printf("a = %i", a);         =====> body
+        a = a+1;
+    }
+    return a;
+}
+    
+    """
 
 
 class FunctionParameter(Expression):

@@ -2,7 +2,7 @@ from Lexer import Lexer
 from Token import Token, TokenType
 from typing import Callable
 from enum import Enum, auto
-from AST import Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, LetStatement
+from AST import Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, LetStatement, WhileStatement
 from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement, IfStatement, BooleanLiteral, CallExpression, FunctionParameter, StringLiteral
 
 # precedence Type => evels of operator priority from lowest to highest
@@ -98,7 +98,8 @@ class Parser:
 
 
     def __peek_error(self, tt):
-        self.errors.append(f"Expected next token to be {tt}, not {self.peek_token.type}")
+            next_type = self.peek_token.type if (self.peek_token is not None) else None
+            self.errors.append(f"Expected next token to be {tt}, not {next_type}")
 
 
 
@@ -165,6 +166,8 @@ class Parser:
                 return self.__parser_function_statement()
             case TokenType.RETURN:
                 return self.__parser_return_statement()
+            case TokenType.WHILE:
+                return self.__parser_while_statement()
             case _:
                 return self.__parse_expression_statement()
     
@@ -305,14 +308,6 @@ class Parser:
         self.__next_token()
         return stmt
 
-        
-
-
-
-    def __current_token_is(self, tt: TokenType):
-        return self.current_token.type == tt
-        
-
 
     def __parse_if_statement(self):
         condition = None
@@ -421,8 +416,18 @@ class Parser:
     
 
     def __parse_boolean(self):
-        return BooleanLiteral(value=self.__current_token(TokenType.TRUE))
+        return BooleanLiteral(value=(self.current_token.type == TokenType.TRUE))
     
 
     def __parse_string_literal(self):
         return StringLiteral(value = self.current_token.literal)
+    
+    def __parser_while_statement(self):
+        condition= None
+        body = None
+        self.__next_token()
+        condition=self.__parse_expression(PresedanceType.P_LOWEST)
+        if not self.__expect_peek(TokenType.LBRACE):
+            return None
+        body=self.__parse_block_statement()
+        return WhileStatement(condition=condition, body=body)

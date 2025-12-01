@@ -1,6 +1,6 @@
 from llvmlite import ir
 
-from AST import NodeType, Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral
+from AST import NodeType, Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, WhileStatement
 from Environment import Environment
 from AST import FunctionStatement, BlockStatement, ReturnStatement, AssignStatement, IfStatement, BooleanLiteral, CallExpression, FunctionParameter, StringLiteral
 
@@ -86,6 +86,9 @@ class Compiler:
             
             case NodeType.CallExpression:
                 self.__visit_call_expression(node)
+            
+            case NodeType.WhileStatement:
+                self.__visit_while_expression(node)
 
     
 
@@ -297,9 +300,42 @@ class Compiler:
                 func, ret_type = self.env.lookup(name)
                 ret = self.builder.call(func, args)
         return ret, ret_type
+    
+
+    def __visit_while_expression(self, node):
+        # node has .condition and .body
+        func = self.builder.block.function  # current function object
+
+        # create blocks
+        cond_bb = func.append_basic_block(f"while_cond_{self.__increment_counter()}")
+        body_bb = func.append_basic_block(f"while_body_{self.__increment_counter()}")
+        after_bb = func.append_basic_block(f"while_after_{self.__increment_counter()}")
+
+        # Branch from current block to condition check
+        self.builder.branch(cond_bb)
+
+        # CONDITION block: evaluate condition and branch to body or after
+        self.builder.position_at_start(cond_bb)
+        test, _ = self.__resolve_value(node.condition)
+        # ensure test is an i1 (boolean) — if it's i32, compare != 0
+        if not isinstance(test.type, ir.IntType) or test.type.width != 1:
+            # convert i32 to i1 by comparing to zero
+            zero = ir.Constant(test.type, 0)
+            test = self.builder.icmp_signed('!=', test, zero)
+        self.builder.cbranch(test, body_bb, after_bb)
+
+        # BODY block: compile the loop body, then jump back to condition
+        self.builder.position_at_start(body_bb)
+        self.compile(node.body)
+        # Ensure there's a branch back to condition (avoid falling off)
+        # If the body last instruction already returned/branched, don't add an extra branch.
+        if self.builder.block.terminator is None:
+            self.builder.branch(cond_bb)
+
+        # AFTER block: continue compiling after the loop
+        self.builder.position_at_start(after_bb)
+
         
-
-
 
     def __resolve_value(self, node, value_type=None):
         match node.type():

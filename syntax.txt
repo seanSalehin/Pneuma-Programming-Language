@@ -5,7 +5,7 @@ varibles => Mark
 Declearing a variable :
 mark x:int = 10;
 
-
+///////////////////////////////////////////
 
 Function : 
 act main() => int{
@@ -14,7 +14,7 @@ act main() => int{
     return x;
 }
 
-
+//////////////////////////////////////////
 
 Assignment:
 act main() => int{
@@ -24,7 +24,7 @@ act main() => int{
     return x;
 }
 
-
+///////////////////////////////////////////
 
 If statement
 act main() => int {
@@ -38,6 +38,7 @@ act main() => int {
 }
 
 
+/////////////////////////////////////////
 
 function declarations 
 act test()=>int{return 10;} 
@@ -46,8 +47,6 @@ act test()=>int{return 10;}
 comparisons  if a == b { ... }
 
 
-
-!=
 act main() => int {
   mark x:int = 50;
   if x!=19{
@@ -59,20 +58,22 @@ act main() => int {
 }
 
 
+///////////////////////////////////////////
 
 Calling a function + parameter
 
 act TestFunction(a:int, b:int)=>int{
-    return a+b
+    return a+b;
 }
 
 act main()=>int{
     return TestFunction(1, 2); 
 }
 
-
+///////////////////////////////////////////
 
 strings + printf => Kiwi 5
+
 act add(a:int, b:int)=>int{
     return a+b;
 }
@@ -81,3 +82,18 @@ act main()=>int{
     printf("kiwi %i", add(2, 3));
     return add(2, 3);
 }
+
+///////////////////////////////////////////
+
+Do-while
+
+act main()=>int{
+    mark x:int =0;
+
+    while x<10{
+        printf("a = %i\n", x);
+        x = x+1;
+    }
+    return x;
+}
+
