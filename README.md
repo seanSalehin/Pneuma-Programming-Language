@@ -5,16 +5,27 @@ Pneuma (πνεῦμα) – A modern, JIT-style compiled programming language des
 ✨ Features:
 
 ✅ Core Language Capabilities
+
 ✅ Static Typing with type inference support
+
 ✅ JIT-style Execution for optimal performance
+
 ✅ First-class Functions with parameters, return types, and function call
+
 ✅ Complete Control Flow (if/else, while, do-while, scan/for, continue, break)
+
 ✅ Modular Programming with file imports
+
 ✅ Boolean Logic including negation operator (!false)
+
 ✅ Prefix & Postfix increment/decrement operations (++, --, , -26 )
+
 ✅ String Manipulation with type safety
+
 ✅ Comparison operators: ==, <, >, <=, >=
+
 ✅ Arithmetic Operations (x = x * 2)
+
 ✅ Assignment Operations	(*=, +=, -=, /=, !=) => (x *= 2;)
 
 🚀 Quick Start:
