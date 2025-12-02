@@ -1,6 +1,6 @@
 # 🌟 Pneuma Programming Language v2.8.1
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Custom-blue.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/seanSalehin/Pneuma-Programming-Language)](https://github.com/seanSalehin/Pneuma-Programming-Language/releases)
 
 Pneuma (πνεῦμα) – A modern, JIT-style compiled programming language designed for clarity, performance, and expressive syntax. Named after the ancient Greek concept of "breath" or "spirit," Pneuma aims to breathe life into your ideas with clean, type-safe code.
