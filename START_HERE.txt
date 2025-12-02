@@ -31,20 +31,6 @@ All additional files must be in the Test folder and have the .pn extension.
 Example: load "filename.pn";
 
 
-FEATURES:
-------------------------------------------------------------------------------------------------
-• Functions with typed arguments, return values, function calls, and parameters
-• Comparison operations and boolean logic
-• Loops (while, scan/for), break, and continue
-• Import/load files using .pn extension
-• String and variable handling with type annotations
-• JIT-style execution for optimal performance
-• printf with formatting
-• Prefix and postfix operators
-• Support for negative numbers
-• do/while loops
-
-
 VERSION:
 ------------------------------------------------------------------------------------------------
 This is Pneuma version 2.8.1
