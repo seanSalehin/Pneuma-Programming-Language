@@ -3,7 +3,7 @@ from Token import Token, TokenType
 from typing import Callable
 from enum import Enum, auto
 from AST import Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, LetStatement, WhileStatement
-from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement, IfStatement, BooleanLiteral, CallExpression, FunctionParameter, StringLiteral
+from AST import FunctionStatement, ReturnStatement, BlockStatement, AssignStatement, IfStatement, BooleanLiteral, CallExpression, FunctionParameter, StringLiteral, BreakStatement, ForStatement, ContinueStatement
 
 # precedence Type => evels of operator priority from lowest to highest
 class PresedanceType(Enum):
@@ -168,6 +168,12 @@ class Parser:
                 return self.__parser_return_statement()
             case TokenType.WHILE:
                 return self.__parser_while_statement()
+            case TokenType.CONTINUE:
+                return self.__parse_continue_statement()
+            case TokenType.BREAK:
+                return self.__parse_break_statement()
+            case TokenType.FOR:
+                return self.__parse_for_statement()
             case _:
                 return self.__parse_expression_statement()
     
@@ -386,10 +392,6 @@ class Parser:
         return e_list
 
 
-
-
-    
-
     #prefix methods
     def __parse_int_literal(self):
         try:
@@ -431,3 +433,42 @@ class Parser:
             return None
         body=self.__parse_block_statement()
         return WhileStatement(condition=condition, body=body)
+    
+
+    def __parse_break_statement(self):
+        self.__next_token()
+        return BreakStatement()
+
+    def __parse_continue_statement(self):
+        self.__next_token()
+        return ContinueStatement()
+
+    def __parse_for_statement(self):
+        """
+            scan (matrk x:int = 10; x<10; x = x + 1);
+        """
+        stmt = ForStatement()
+        if not self.__expect_peek(TokenType.LEFTPARENTHESES): #we expect a left parentheses
+            return None
+        
+        if not self.__expect_peek(TokenType.LET): # we expect a varible decleration => mark
+            return None
+        
+        stmt.var_declaration=self.__parse_let_statement() #read mark
+        self.__next_token() #skip the semicolon
+
+        stmt.condition = self.__parse_expression(PresedanceType.P_LOWEST) # read condition (expression)
+
+        if not self.__expect_peek(TokenType.SEMICOLON):
+            return None
+        self.__next_token()
+
+        stmt.action=self.__parse_assignment_statement()
+        
+        if not self.__expect_peek(TokenType.LBRACE):
+            return None
+        
+        stmt.body=self.__parse_block_statement()
+        return stmt
+
+

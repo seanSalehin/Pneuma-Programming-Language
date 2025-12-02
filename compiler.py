@@ -1,6 +1,6 @@
 from llvmlite import ir
 
-from AST import NodeType, Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, WhileStatement
+from AST import NodeType, Statement, Expression, Program, ExpressionStatement, InfixExpression, IntegerLiteral, FloatLiteral, IdentifierLiteral, WhileStatement, BreakStatement, ContinueStatement, ForStatement
 from Environment import Environment
 from AST import FunctionStatement, BlockStatement, ReturnStatement, AssignStatement, IfStatement, BooleanLiteral, CallExpression, FunctionParameter, StringLiteral
 
@@ -21,6 +21,10 @@ class Compiler:
         self.errors=[]
         self.counter = 0
         self.__initialize_builtins()
+
+        #for loop block (for, continue, break)
+        self.breakpoints = []
+        self.continues = []
     
 
 
@@ -89,6 +93,15 @@ class Compiler:
             
             case NodeType.WhileStatement:
                 self.__visit_while_expression(node)
+
+            case NodeType.BreakStatement:
+                self.__visit_break_statement(node)
+            
+            case NodeType.ContinueStatement:
+                self.__visit_continue_statement(node)
+            
+            case NodeType.ForStatement:
+                self.__visit_for_statement(node)
 
     
 
@@ -335,7 +348,59 @@ class Compiler:
         # AFTER block: continue compiling after the loop
         self.builder.position_at_start(after_bb)
 
+
+    def __visit_break_statement(self, node):
+        self.builder.branch(self.breakpoints[-1])
+
+    def __visit_continue_statement(self, node):
+        self.builder.branch(self.continues[-1])
+
+    def __visit_for_statement(self, node):
+        var_declaration = node.var_declaration
+        condition = node.condition
+        action = node.action
+        body = node.body
+        previous_env = self.env
+        self.env = Environment(parent=previous_env)
+        self.compile(var_declaration)
+        func = self.builder.block.function
+        cond_bb = func.append_basic_block(f"for_cond_{self.__increment_counter()}")
+        body_bb = func.append_basic_block(f"for_body_{self.__increment_counter()}")
+        inc_bb = func.append_basic_block(f"for_inc_{self.__increment_counter()}")
+        after_bb = func.append_basic_block(f"for_after_{self.__increment_counter()}")
+        self.breakpoints.append(after_bb)
+        self.continues.append(inc_bb)
+        self.builder.branch(cond_bb)
         
+        # check if we should enter the loop
+        self.builder.position_at_start(cond_bb)
+        cond_val, cond_type = self.__resolve_value(condition)
+        
+        # Convert condition to i1 if needed
+        if isinstance(cond_type, ir.IntType) and cond_type.width > 1:
+            zero = ir.Constant(cond_type, 0)
+            cond_val = self.builder.icmp_signed('!=', cond_val, zero)
+        
+        self.builder.cbranch(cond_val, body_bb, after_bb)
+        
+        # BODY BLOCK
+        self.builder.position_at_start(body_bb)
+        self.compile(body)
+        
+        # If body didn't end with a terminator (break/continue/return), go to increment
+        if self.builder.block.terminator is None:
+            self.builder.branch(inc_bb)
+        
+        # INCREMENT BLOCK
+        self.builder.position_at_start(inc_bb)
+        self.compile(action)
+        self.builder.branch(cond_bb)  # Go back to condition check
+        
+        # AFTER BLOCK
+        self.builder.position_at_start(after_bb)
+        self.breakpoints.pop()
+        self.continues.pop()
+        self.env = previous_env
 
     def __resolve_value(self, node, value_type=None):
         match node.type():

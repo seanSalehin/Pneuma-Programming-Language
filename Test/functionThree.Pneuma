@@ -1,9 +1,10 @@
-act main() => int {
-  mark x:int = 50;
-  if x!=19{
-    x=43;
-  }else{
-    x=12;
-  }
-  return x;
+
+act main() => int{
+    scan (mark y:int = 0; y <= 10; y = y + 1){
+        if (y == 5){
+            continue;
+        }
+        printf("y = %i\n", y)
+    }
+    return 0;
 }

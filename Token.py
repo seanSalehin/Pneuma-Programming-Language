@@ -59,6 +59,9 @@ class TokenType(Enum):
     TRUE = "TRUE"
     FALSE = "FALSE"
     WHILE = "WHILE"
+    CONTINUE = "CONTINUE"
+    BREAK = "BREAK"
+    FOR = "FOR"
 
     #Syntax - Typing
     TYPE = "TYPE"
@@ -89,7 +92,10 @@ KEYWORDS: dict[str, TokenType] = {
     "else":TokenType.ELSE,
     "true":TokenType.TRUE,
     "false":TokenType.FALSE,
-    "while": TokenType.WHILE
+    "while": TokenType.WHILE,
+    "continue":TokenType.CONTINUE,
+    "break":TokenType.BREAK,
+    "for":TokenType.FOR,
 
 }
 
@@ -102,7 +108,10 @@ ALT_KEYWORDS: dict[str, TokenType]={
     "=>": TokenType.ARROW,
     "if":TokenType.IF,
     "else":TokenType.ELSE,
-    "while":TokenType.WHILE
+    "while":TokenType.WHILE,
+    "break":TokenType.BREAK,
+    "continue":TokenType.CONTINUE,
+    "scan": TokenType.FOR,
 }
 
 TYPE_KEYWORDS: list[str] = ["int", "float", "str", "void"]

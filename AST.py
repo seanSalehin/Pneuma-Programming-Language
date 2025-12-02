@@ -20,7 +20,9 @@ class NodeType(Enum):
     FunctionParameter = "FunctionParameter"
     StringLiteral = "StringLiteral"
     WhileStatement = "WhileStatement"
-
+    BreakStatement = "BreakStatement"
+    ContinueStatement = "ContinueStatement"
+    ForStatement = "ForStatement"
 
 class Node(ABC):
     #each node represents a piece of the program's syntax.
@@ -149,6 +151,17 @@ class IfStatement(Statement):
         }
     
 class WhileStatement(Statement):
+    """
+        act main()=>int{
+        mark x:int =0;
+
+        while x<10{                      ====>condition
+            printf("a = %i", a);         =====> body
+            a = a+1;
+        }
+        return a;
+        }
+    """
     def __init__(self, condition, body=None):
         self.condition = condition
         self.body = body 
@@ -161,18 +174,57 @@ class WhileStatement(Statement):
         "body": self.body.json()
         }
     
-    """
-    act main()=>int{
-    mark x:int =0;
 
-    while x<10{                       ====>condition
-        printf("a = %i", a);         =====> body
-        a = a+1;
-    }
-    return a;
-}
+
+class BreakStatement(Statement):
+    def __init__(self):
+        pass
+
+    def type(self):
+        return NodeType.BreakStatement
     
+    def json(self):
+        return {
+        "type": self.type().value,
+        }
+    
+
+class ContinueStatement(Statement):
+    def __init__(self):
+        pass
+
+    def type(self):
+        return NodeType.ContinueStatement
+    
+    def json(self):
+        return {
+        "type": self.type().value,
+        }
+    
+
+class ForStatement(Statement):
+
     """
+    scan (mark x:int = 10; x < 10; x = x + 1) {};
+    scan (var_declaration ;  condition; action) {body}
+    """
+    def __init__(self, var_declaration = None, condition=None, action=None, body=None):
+        self.var_declaration=var_declaration
+        self.condition=condition
+        self.action=action
+        self.body=body
+
+    def type(self):
+        return NodeType.ForStatement
+    
+    def json(self):
+        return {
+        "type": self.type().value,
+        "var_declaration": self.var_declaration.json(),
+        "condition": self.condition.json(),
+        "action":self.action.json(),
+        "body": self.body.json()
+        }
 
 
 class FunctionParameter(Expression):

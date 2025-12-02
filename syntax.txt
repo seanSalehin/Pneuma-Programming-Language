@@ -97,3 +97,102 @@ act main()=>int{
     return x;
 }
 
+///////////////////////////////////////////
+
+act main() => int{
+    mark x:int = 0;
+    mark loop:int = 5;
+    scan (mark y:int = 0; y<10; y = y + 1){
+        if (y == loop){
+            continue;
+        }
+        if (y == 9){
+            break;
+        }
+        printf("y = %i\n", y)
+        x = y;
+    }
+    return x;
+}
+
+
+result=
+y = 0
+y = 1
+y = 2
+y = 3
+y = 4
+y = 6
+y = 7
+y = 8
+
+
+////////////////////////////////////////////////////
+act main() => int{
+    mark x:int = 0;
+    scan (mark y:int = 0; y <= 10; y = y + 1){
+        printf("y = %i\n", y)
+    }
+    return 0;
+}
+
+
+result 
+y = 0
+y = 1
+y = 2
+y = 3
+y = 4
+y = 5
+y = 6
+y = 7
+y = 8
+y = 9
+y = 10
+
+//////////////////////////////////////////////////
+act main() => int{
+    scan (mark y:int = 0; y <= 10; y = y + 1){
+        if (y == 5){
+            break;
+        }
+        printf("y = %i\n", y)
+    }
+    return 0;
+}
+
+result:
+y = 0
+y = 1
+y = 2
+y = 3
+y = 4
+
+
+//////////////////////////////////////////////////
+
+act main() => int{
+    scan (mark y:int = 0; y <= 10; y = y + 1){
+        if (y == 5){
+            continue;
+        }
+        printf("y = %i\n", y)
+    }
+    return 0;
+}
+
+
+result
+y = 0
+y = 1
+y = 2
+y = 3
+y = 4
+y = 6
+y = 7
+y = 8
+y = 9
+y = 10
+
+
+////////////////////////////////////////////////////
