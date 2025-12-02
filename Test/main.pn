@@ -1,0 +1,7 @@
+load "test.pn";
+
+
+
+act main() => void {
+    printf("Hello, Pneuma!");
+}

@@ -1,0 +1,243 @@
+================================================================================
+                         PNEUMA PROGRAMMING LANGUAGE
+                                 LESSON FILE
+================================================================================
+
+INTRODUCTION
+════════════════════════════════════════════════════════════════════════════════
+• Pneuma is a JIT programming language
+• Entry point: main function
+
+VARIABLES
+════════════════════════════════════════════════════════════════════════════════
+Variables are declared using the 'mark' keyword:
+
+    mark x:int = 10;
+
+PRINT FUNCTION
+════════════════════════════════════════════════════════════════════════════════
+Example:
+
+    act main() => void {
+        printf("test");
+    }
+
+FUNCTIONS
+════════════════════════════════════════════════════════════════════════════════
+Basic function:
+
+    act main() => int {
+        mark x: int = 4;
+        return x;
+    }
+
+ASSIGNMENT OPERATIONS
+════════════════════════════════════════════════════════════════════════════════
+Example:
+
+    act main() => int {
+        mark x:int = 40;
+        x = x * 2;
+        x = x * 2;
+        return x;
+    }
+
+IF STATEMENTS
+════════════════════════════════════════════════════════════════════════════════
+Example:
+
+    act main() => int {
+        mark a:int = 5;
+        if a == 5 {
+            a = 56;
+        } else {
+            a = 57;
+        }
+        return a;
+    }
+
+COMPARISONS
+════════════════════════════════════════════════════════════════════════════════
+Example:
+
+    act main() => int {
+        mark x:int = 50;
+        if x != 19 {
+            x = 43;
+        } else {
+            x = 12;
+        }
+        return x;
+    }
+
+FUNCTION CALLS WITH PARAMETERS
+════════════════════════════════════════════════════════════════════════════════
+Example:
+
+    act TestFunction(a:int, b:int) => int {
+        return a + b;
+    }
+
+    act main() => int {
+        return TestFunction(1, 2); 
+    }
+
+STRINGS AND PRINTF FORMATTING
+════════════════════════════════════════════════════════════════════════════════
+Example:
+
+    act add(a:int, b:int) => int {
+        return a + b;
+    }
+
+    act main() => int {
+        printf("kiwi %i", add(2, 3));
+        return add(2, 3);
+    }
+
+DO-WHILE LOOP
+════════════════════════════════════════════════════════════════════════════════
+Example:
+
+    act main() => int {
+        mark x:int = 0;
+
+        while x < 10 {
+            printf("a = %i\n", x);
+            x = x + 1;
+        }
+        return x;
+    }
+
+SCAN LOOPS (FOR LOOPS)
+════════════════════════════════════════════════════════════════════════════════
+Example 1:
+
+    act main() => int {
+        mark x:int = 0;
+        mark loop:int = 5;
+        scan (mark y:int = 0; y < 10; y++) {
+            if (y == loop) {
+                continue;
+            }
+            if (y == 9) {
+                break;
+            }
+            printf("y = %i\n", y);
+            x = y;
+        }
+        return x;
+    }
+
+Example 2:
+
+    act main() => int {
+        mark x:int = 0;
+        scan (mark y:int = 0; y <= 10; y++) {
+            printf("y = %i\n", y)
+        }
+        return 0;
+    }
+
+Example 3:
+
+    act main() => int {
+        scan (mark y:int = 0; y <= 10; y++) {
+            if (y == 5) {
+                break;
+            }
+            printf("y = %i\n", y);
+        }
+        return 0;
+    }
+
+Example 4:
+
+    act main() => int {
+        scan (mark y:int = 0; y <= 10; y++) {
+            if (y == 5) {
+                continue;
+            }
+            printf("y = %i\n", y);
+        }
+        return y;
+    }
+
+Example 5:
+
+    act main() => int {
+        mark x:int = -10;
+
+        scan (mark y:int = 0; y < 10; y++) {
+            if (y == 5) {
+                break;
+            }
+            if (!false) {
+                printf("correct ");
+            }
+            printf("y = %i\n", y)
+            x = y;
+        }
+        return x;
+    }
+
+
+Example 6 (increment):
+
+    act main() => int {
+        mark x:int = 0;
+        scan (mark y:int = 0; y < 10; y++) {
+            if (y == 3) {
+                break;
+            }
+            printf("y = %i\n", y);
+            x = y;
+        }
+        return x;
+    }
+
+
+Example 7 (decrement):
+
+    act main() => int {
+        mark x:int = 0;
+        scan (mark y:int = 20; y > 10; y--) {
+            if (y == 15) {
+                break;
+            }
+            printf("y = %i\n", y);
+            x = y;
+        }
+        return x;
+    }
+
+
+IMPORT EXAMPLE
+════════════════════════════════════════════════════════════════════════════════
+File: test.pn
+
+    act test_add(a:int, b:int) => int {
+        printf(" a=%i, b=%i\n", a, b);
+        return a + b;
+    }
+
+File: main.pn
+
+    load "test.pn";
+
+    act main() => int {
+        mark x:int = 0;
+        scan (mark y:int = 0; y < 10; y++) {
+            if (y == 6) {
+                printf("y + 2: %i\n", test_add(y, 5));
+            }
+            if (y == 3) {
+                break;
+            }
+            printf("y = %i\n", y);
+            x = y;
+        }
+        return x;
+    }
+
+================================================================================

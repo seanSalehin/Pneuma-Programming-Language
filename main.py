@@ -10,22 +10,23 @@ from ctypes import CFUNCTYPE, c_int, c_float
 import os
 
 
+
 Lexer_Bug=False
 Parse_Bug=False
 Compiler_Bug = False
 RUN_CODE = True
+PROD_DEBUG = False
 
 
 if __name__=='__main__':
-
+    
     for filename in os.listdir('.'):
         if filename.endswith('.Pneuma'):
             new_filename = filename.replace('.Pneuma', '.pn')
             os.rename(filename, new_filename)
 
-    with open("Test/code.pn", 'r') as f:
+    with open("Test/main.pn", 'r') as f:
         code=f.read()
-
 
     #lexer debug
     if Lexer_Bug:
@@ -36,7 +37,10 @@ if __name__=='__main__':
     l=Lexer(source=code)
     p = Parser(lexer=l)
 
+    parse_start = time.time()
     program = p.parse_program()
+    parse_end = time.time()
+
     if len(p.errors)>0:
          for err in p.errors:
              print(err)
@@ -44,7 +48,7 @@ if __name__=='__main__':
 
     #parser debug
     if Parse_Bug:
-        print("parser debug")
+        print("Parser Debug")
         #program = p.parse_program()
         with open("debug/ast.json", "w") as f:
             json.dump(program.json(), f, indent=4)
@@ -53,7 +57,14 @@ if __name__=='__main__':
 
     #compiler debug
     c=Compiler()
+
+    compiler_start = time.time()
     c.compile(node=program)
+    compiler_end = time.time()
+    
+
+
+    #output
     module=c.module
     module.triple = llvm.get_default_triple()
     if Compiler_Bug:
@@ -81,4 +92,9 @@ if __name__=='__main__':
         st=time.time()
         result = cfunc()
         et = time.time()
+
+        if PROD_DEBUG:
+            print(f"Parsed in : {round ((parse_end - parse_start)* 1000, 6)} ms.")
+            print(f"Compiled in : {round ((compiler_end - compiler_start)* 1000, 6)} ms.")
+
         print(f'\n\nResult: {result}\n===Executed in {round((et-st)*1000, 6)}  ms\n')

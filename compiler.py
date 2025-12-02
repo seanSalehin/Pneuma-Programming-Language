@@ -584,25 +584,18 @@ class Compiler:
                 print(err)
             exit(1)
         
-        # DON'T create a new environment - compile into the current environment
-        # This makes imported functions available to the current scope
         previous_breakpoints = self.breakpoints
         previous_continues = self.continues
         
-        # Reset loop control stacks for clean compilation
         self.breakpoints = []
         self.continues = []
         
-        # Compile the imported program in the CURRENT environment
         self.compile(node=program)
         
-        # Restore loop control stacks
         self.breakpoints = previous_breakpoints
         self.continues = previous_continues
         
-        # Store the imported program
         self.global_parsed_pallets[file] = program
-
 
 
 
