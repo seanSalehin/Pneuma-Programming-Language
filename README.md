@@ -3,10 +3,22 @@
 [![License](https://img.shields.io/badge/license-Custom-blue.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/seanSalehin/Pneuma-Programming-Language)](https://github.com/seanSalehin/Pneuma-Programming-Language/releases)
 
-Pneuma (πνεῦμα) – A modern, JIT-style compiled programming language designed for clarity, performance, and expressive syntax. Named after the ancient Greek concept of "breath" or "spirit," Pneuma aims to breathe life into your ideas with clean, type-safe code.
+Pneuma (πνεῦμα) is a modern, JIT-style compiled programming language designed for clarity, performance, and expressive syntax. Inspired by the ancient Greek concept of "breath" or "spirit," Pneuma brings life to your ideas through clean, type-safe code.
 
+---
 
-✨ Features:
+## Table of Contents
+
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Project Rules](#-project-rules)
+- [Language Guide](#-language-guide)
+- [Learning Resources](#-learning-resources)
+- [License](#-license)
+
+---
+
+## ✨ Features
 
 ✅ Core Language Capabilities
 
@@ -32,8 +44,9 @@ Pneuma (πνεῦμα) – A modern, JIT-style compiled programming language des
 
 ✅ Assignment Operations	(*=, +=, -=, /=, !=) => (x *= 2;)
 
+---
 
-🚀 Quick Start:
+## 🚀 Quick Start
 
 1. Create a new folder for your project (e.g., Pneuma).
 2. Open the folder in your IDE or your code editor.
@@ -48,15 +61,17 @@ Pneuma (πνεῦμα) – A modern, JIT-style compiled programming language des
 8. Edit main.pn to write your program.
 9. To run, execute (from the root folder): python main.py
 
+---
 
-⚡ Important Project Rules:
+## ⚡ Project Rules
 
 Entry Point: All programs must contain act main() => return_type as the starting point
 File Organization: Place all .pn source files within the Test folder
 File Extensions: Use .pn for all Pneuma source files
 
+---
 
-📚 Language Guide
+## 📚 Language Guide
 
 | Construct                 | Syntax Example                          | Description                        
 |---------------------------|-----------------------------------------|---------------------------------|
@@ -79,19 +94,22 @@ File Extensions: Use .pn for all Pneuma source files
 | First-class Functions     | `act main(a:int, b:int) => int { ... }` | Functions as values             |
 | Function Call	            | `add(2, 3); result = add(2, 3);`        |Calling a function               |
 
+---
 
-📖 Learning Resources
+## 📖 Learning Resources
 
 For detailed tutorials and code samples, please navigate to the Tutorials.txt file inside the Test folder. This file contains step-by-step guides and practical examples to help you get started and understand the implementation process.
 
+---
 
-📄 License
+## 📄 License
+
 © 2024 Pneuma Language Project. All rights reserved.
 
+This project does not have an open-source license. By default, all rights are reserved. Use, modification, and distribution of the source code are not permitted without explicit permission from the project maintainer.
 
-Pneuma – Where every line breathes intention.
 
-Maintainer: Sean Salehin
-Documentation Version: 2.8.0
+**Pneuma – Where every line breathes intention.**  
+Maintainer: Sean Salehin  
+Documentation Version: 2.8.0  
 Last Updated: December 2024
-
