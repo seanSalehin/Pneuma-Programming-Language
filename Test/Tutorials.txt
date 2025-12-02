@@ -14,7 +14,7 @@ Variables are declared using the 'mark' keyword:
 
     mark x:int = 10;
 
-PRINT FUNCTION
+PRINT
 ════════════════════════════════════════════════════════════════════════════════
 Example:
 
