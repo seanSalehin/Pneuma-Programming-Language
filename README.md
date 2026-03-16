@@ -1,4 +1,4 @@
-# 🌟 Pneuma Programming Language v2.8.1
+#  Pneuma Programming Language v2.8.1
 
 [![License](https://img.shields.io/badge/license-Custom-blue.svg)](LICENSE)
 
@@ -17,7 +17,7 @@ Pneuma (πνεῦμα) is a modern, JIT-style compiled programming language desi
 
 ---
 
-## ✨ Features
+##  Features
 
 ✅ Core Language Capabilities
 
@@ -45,7 +45,7 @@ Pneuma (πνεῦμα) is a modern, JIT-style compiled programming language desi
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 1. Create a new folder for your project (e.g., Pneuma).
 2. Open the folder in your IDE or your code editor.
@@ -64,7 +64,7 @@ Pneuma (πνεῦμα) is a modern, JIT-style compiled programming language desi
 
 ---
 
-## ⚡ Project Rules
+##  Project Rules
 
 Entry Point: All programs must contain act main() => return_type as the starting point
 File Organization: Place all .pn source files within the Test folder
@@ -72,7 +72,7 @@ File Extensions: Use .pn for all Pneuma source files
 
 ---
 
-## 📚 Language Guide
+##  Language Guide
 
 | Construct                 | Syntax Example                          | Description                        
 |---------------------------|-----------------------------------------|---------------------------------|
@@ -97,15 +97,15 @@ File Extensions: Use .pn for all Pneuma source files
 
 ---
 
-## 📖 Learning Resources
+##  Learning Resources
 
 For detailed tutorials and code samples, please navigate to the Tutorials.txt file inside the Test folder. This file contains step-by-step guides and practical examples to help you get started and understand the implementation process.
 
 ---
 
-## 📄 License
+##  License
 
-© 2025 Pneuma Language Project. All rights reserved.
+© 2026 Pneuma Language Project. All rights reserved.
 
 This project does not have an open-source license. By default, all rights are reserved. Use, modification, and distribution of the source code are not permitted without explicit permission from the project maintainer.
 
@@ -113,4 +113,3 @@ This project does not have an open-source license. By default, all rights are re
 **Pneuma – Where every line breathes intention.**  
 Maintainer: Sean Salehin  
 Documentation Version: 2.8.0  
-Last Updated: December 2024
