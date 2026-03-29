@@ -19,29 +19,17 @@ Pneuma (πνεῦμα) is a modern, JIT-style compiled programming language desi
 
 ##  Features
 
-✅ Core Language Capabilities
-
-✅ Static Typing with type inference support
-
-✅ JIT-style Execution for optimal performance
-
-✅ First-class Functions with parameters, return types, and function call
-
-✅ Complete Control Flow (if/else, while, do-while, scan/for, continue, break)
-
-✅ Modular Programming with file imports
-
-✅ Boolean Logic including negation operator (!false)
-
-✅ Prefix & Postfix increment/decrement operations (++, --, , -26 )
-
-✅ String Manipulation with type safety
-
-✅ Comparison operators: ==, <, >, <=, >=
-
-✅ Arithmetic Operations (x = x * 2)
-
-✅ Assignment Operations	(*=, +=, -=, /=, !=) => (x *= 2;)
+* **Static Typing:** Includes robust type inference support.
+* **JIT-style Execution:** Engineered for optimal runtime performance.
+* **First-class Functions:** Supports parameters, return types, and nested function calls.
+* **Complete Control Flow:** Includes `if/else`, `while`, `do-while`, `scan/for`, `continue`, and `break`.
+* **Modular Programming:** Native support for file imports and namespacing.
+* **Boolean Logic:** Full logical suite including the negation operator (e.g., `!false`).
+* **Increment/Decrement:** Supports both prefix and postfix operations (e.g., `++i`, `i--`).
+* **String Manipulation:** Type-safe handling of string data.
+* **Comparison Operators:** Includes `==`, `<`, `>`, `<=`, and `>=`.
+* **Arithmetic Operations:** Standard math support (e.g., `x = x * 2`).
+* **Assignment Operations:** Compound assignments such as `*=`, `+=`, `-=`, `/=`, and `%=`.
 
 ---
 
