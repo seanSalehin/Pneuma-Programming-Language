@@ -1,5 +1,6 @@
+<p align="center">
   <img src="https://i.postimg.cc/QCHZVcPn/logo.jpg" alt="Pneuma Logo" width="350">
-
+</p>
 
 #  Pneuma Programming Language v2.8.1
 
